@@ -63,7 +63,7 @@ print(base)
 The theoretical variance is `r th_var` and sample variance is `r sample_var`. The sample variance is close to the theoretical variance. This supports that the sample variance is an estimate of the population variance. Moreover, the figure 2 indicates that the sample variance centers around the population variance.
 
 ## Distribution
-Figure 2 shows that the distribution is similar to the normal distribution. According to Central Limit Theorem, when the sample size increases, the distribution will be closer to the normal distribution. Having larger sample size will make the sample mean be closer to the population mean, so it will help the sample variable be closer to the population variance and the normal distribution.
+Figure 2 shows that the distribution is similar to the normal distribution. According to Central Limit Theorem, when the sample size increases, the distribution will be closer to the normal distribution. Having larger sample size will make the sample mean be closer to the population mean, so it will help the sample variance be closer to the population variance and the normal distribution.
 
 ```{r, fig.height=3, warning=FALSE, echo=FALSE}
 # Generate samples
@@ -73,11 +73,10 @@ samples = rexp(40000, lambda)
 base <- qplot(samples, geom="density")
 base <- base + labs(title = "Fig 3. The distribution of 40,000 exponentials")
 base <- base + labs(y = "Density", x = "Sample")
-base <- base + stat_function(fun=dnorm, size=1, color="red", arg=list(mean=mean(samples), sd=sd(samples)))
 print(base)
 ```
 
-Figure 3 is the distribution of 40,000 exponentials. This distribution does not represent the normal distribution like the distribution of averages of 40 exponentials. If we can gather infinite samples, this distribution should be able to represent the normal distribution.
+Figure 3 is the distribution of 40,000 exponentials. This distribution does not represent the normal distribution like the distribution of averages of 40 exponentials. If we can gather infinite samples, this distribution should be able to represent the exponential distribution. Figure 2 clearly shows Central Limit Theorem transforms the exponential distribution to the normal distribution.
 
 # Appendix
 
@@ -90,6 +89,5 @@ samples = rexp(40000, lambda)
 base <- qplot(samples, geom="density")
 base <- base + labs(title = "Fig 3. The distribution of 40,000 exponentials")
 base <- base + labs(y = "Density", x = "Sample")
-base <- base + stat_function(fun=dnorm, size=1, color="red", arg=list(mean=mean(samples), sd=sd(samples)))
 print(base)
 ```
