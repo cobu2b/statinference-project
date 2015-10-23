@@ -1,0 +1,42 @@
+---
+title: "Analysis of ToothGrowth data"
+author: "Thammanoon Kawinfruangfukul"
+output: pdf_document
+---
+## Overview
+This report provides a summary of ToothGrowth data to highlight basic features of the data. Moreover, this report shows assumptions, solutions, and conclusions of confidence intervals and hypothesis tests to compare tooth growth of 60 guinea pigs by supplement and dosage.
+
+## Exploratory Data Analysis
+```{r}
+# Load the ToothGrowth data 
+data(ToothGrowth)
+data <- data.frame(ToothGrowth)
+
+# Display the overview structure of the ToothGrowth data
+str(ToothGrowth)
+```
+
+the ToothGrowth data was collected from 60 guinea pigs. The researchers measured the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with two delivery methods coded `r unique(data$supp)`.
+
+```{r}
+# Calculate means of the data of each of 10 guinea pigs by supplements and dosages.
+means <- aggregate(data$len, list(data$supp, data$dose), mean)
+colnames(means) <- c ("supp", "dose", "mean")
+means
+```
+
+Following figure show the data of each of 10 guinea pigs by supplements and dosages.
+```{r}
+library(ggplot2)
+base <- qplot(x = len, data = data, facets = supp ~ dose, geom=c("density"))
+base <- base + labs(title = "Fig 1. ToothGrowth Data by Supplements and Dosages")
+print(base)
+```
+
+## Confidence Intervals and Hypothesis Tests
+```{r}
+# Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+# State your conclusions and the assumptions needed for your conclusions. 
+# Did the student perform some relevant confidence intervals and/or tests?
+# Did the student describe the assumptions needed for their conclusions?
+```
