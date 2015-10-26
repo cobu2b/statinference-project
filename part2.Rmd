@@ -16,7 +16,7 @@ data <- data.frame(ToothGrowth)
 str(ToothGrowth)
 ```
 
-the ToothGrowth data was collected from 60 guinea pigs. The researchers measured the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with two delivery methods coded `r unique(data$supp)`.
+the ToothGrowth data was collected from 60 guinea pigs. The researchers measured the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with two delivery methods: ascorbic acid, orange juice coded `r unique(data$supp)`.
 
 ```{r}
 # Calculate means of the data of each of 10 guinea pigs by supplements and dosages.
@@ -26,24 +26,56 @@ means
 ```
 
 Following figure show the data of each of 10 guinea pigs by supplements and dosages.
-```{r}
+```{r, fig.height=4}
 library(ggplot2)
-base <- qplot(x = len, data = data, facets = supp ~ dose, geom=c("density"))
+base <- qplot(x = len, data = data, facets = supp ~ dose, binwidth = 3)
 base <- base + labs(title = "Fig 1. ToothGrowth Data by Supplements and Dosages")
 print(base)
 ```
 
 ## Confidence Intervals and Hypothesis Tests
-```{r}
-t.test(len ~ supp, paired=FALSE, data=data)
-t.test(len ~ supp, paired=FALSE, data=data[data$dose == 0.5,])
-t.test(len ~ supp, paired=FALSE, data=data[data$dose == 1,])
-t.test(len ~ supp, paired=FALSE, data=data[data$dose == 2,])
-```
+### Assumptions
+* ToothGrowth follows a normal distribution.
+* Non-equal variances among all groups in this dataset
 
+### Comparisons by Supplements
+* H0: Orange juice is as effective as ascorbic acid when the guinea pigs were applied the same dosages.
+      (Average length with orange juice is equal to average length with ascorbic acid.)
 ```{r}
-# Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
-# State your conclusions and the assumptions needed for your conclusions. 
-# Did the student perform some relevant confidence intervals and/or tests?
-# Did the student describe the assumptions needed for their conclusions?
+supp_0_5 <- t.test(len ~ supp, paired=FALSE, data=data[data$dose == 0.5,])
+supp_1_0 <- t.test(len ~ supp, paired=FALSE, data=data[data$dose == 1,])
+supp_2_0 <- t.test(len ~ supp, paired=FALSE, data=data[data$dose == 2,])
+supps <- data.frame("p-value" = c(supp_0_5$p.value, supp_1_0$p.value, supp_2_0$p.value), 
+                    "Conf-Lo" = c(supp_0_5$conf[1], supp_1_0$conf[1], supp_2_0$conf[1]),
+                    "Conf-Hi" = c(supp_0_5$conf[2], supp_1_0$conf[2], supp_2_0$conf[2]))
+supps
 ```
+Giving orange juice and ascorbic acid at dosages 0.5 and 1.0 does not give the same effect in legth because p-values are less than 0.05 and the confidence intervals do not include 0. However, based on p-value and confidence interval, giving orange juice and ascorbic acid at dosage 2.0 provides the same effect in length.
+
+### Comparisons by Dosages of Orange Juice
+* H0: Different dosages in using orange juice give the same effect.
+```{r}
+oj <- data[data$supp =="OJ", ]
+oj_0_5_1_0 <- t.test(oj[oj$dose == 0.5, 1], oj[oj$dose == 1, 1], paired=FALSE)
+oj_0_5_2_0 <- t.test(oj[oj$dose == 0.5, 1], oj[oj$dose == 2, 1], paired=FALSE)
+oj_1_0_2_0 <- t.test(oj[oj$dose == 1, 1], oj[oj$dose == 2, 1], paired=FALSE)
+ojs <- data.frame("p-value" = c(oj_0_5_1_0$p.value, oj_0_5_2_0$p.value, oj_1_0_2_0$p.value), 
+                  "Conf-Lo" = c(oj_0_5_1_0$conf[1], oj_0_5_2_0$conf[1], oj_1_0_2_0$conf[1]),
+                  "Conf-Hi" = c(oj_0_5_1_0$conf[2], oj_0_5_2_0$conf[2], oj_1_0_2_0$conf[2]))
+ojs
+```
+Since p-values are less than 0.05 and confidence intervals do not include 0 in all tests (differences between 0.5 and 1.0, 0.5 and 2.0, 1.0 and 2.0), it said that these comparisons do not provide the same effect.
+
+### Comparisons by Dosages of Ascorbic Acid
+* H0: Different dosages in using ascorbic acid give the same effect.
+```{r}
+vc <- data[data$supp =="VC", ]
+vc_0_5_1_0 <- t.test(vc[vc$dose == 0.5, 1], vc[vc$dose == 1, 1], paired=FALSE)
+vc_0_5_2_0 <- t.test(vc[vc$dose == 0.5, 1], vc[vc$dose == 2, 1], paired=FALSE)
+vc_1_0_2_0 <- t.test(vc[vc$dose == 1, 1], vc[vc$dose == 2, 1], paired=FALSE)
+vcs <- data.frame("p-value" = c(vc_0_5_1_0$p.value, vc_0_5_2_0$p.value, vc_1_0_2_0$p.value), 
+                  "Conf-Lo" = c(vc_0_5_1_0$conf[1], vc_0_5_2_0$conf[1], vc_1_0_2_0$conf[1]),
+                  "Conf-Hi" = c(vc_0_5_1_0$conf[2], vc_0_5_2_0$conf[2], vc_1_0_2_0$conf[2]))
+vcs
+```
+Since p-values are less than 0.05 and confidence intervals do not include 0 in all tests (differences between 0.5 and 1.0, 0.5 and 2.0, 1.0 and 2.0), it said that these comparisons do not provide the same effect.
